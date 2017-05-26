@@ -7,8 +7,62 @@ exports.user_list = function(req, res) {
 };
 
 // Display detail page for a specific User
-exports.user_detail = function(req, res) {
-	res.send('NOT IMPLEMENTED: User detail' + req.params.id);
+exports.user_detail_post = function(req, res) {
+	var errors = 0
+    
+    if (errors) {
+// TODO: Need to replace this with a meaningful RESTful error response
+    	res.render('user_form', { title: 'Create User', user: user, errors: errors}); 
+    return;
+    } 
+    else {
+    // Data from form is valid
+
+/*    
+        var user = { first_name: req.body.first_name, 
+        	         family_name: req.body.family_name
+        	       };
+        
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['add', JSON.stringify(user)]
+            };
+*/
+		var dataToSend = req.body;
+		var txtToSend = JSON.stringify(dataToSend)
+		console.log(txtToSend);
+		
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['get', txtToSend]
+            };
+        var shell = new PythonShell('users.py', pyOptions);
+        var output = '';
+        shell.on('message', function(message) {
+            console.log('FROM PYTHON: ' + message);
+            output += ''+message;
+            //one message for each print
+//            res.send(message);
+        });
+        shell.on('error', function(message) {
+        	console.log('ERROR FROM PYTHON: ' + message);
+        	//one message for each stderr.write
+        	//Need to display the error message in a pop-up
+        });
+        shell.end(function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+            	console.log('Total output:' + output)
+            	res.send(output);
+            }
+        }); 
+//        res.send(message);
+//        res.send('Wish I knew the proper way to implement a model for saving data!');
+    }
+	//res.send('NOT IMPLEMENTED: User detail');
 };
 
 //Display User create form on GET

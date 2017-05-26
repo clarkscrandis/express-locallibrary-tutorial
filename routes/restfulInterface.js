@@ -25,7 +25,7 @@ router.get('/user/:id/update', restUserController.user_update_get);
 router.post('/user/:id/update', restUserController.user_update_post);
 
 /* GET request for one User. */
-router.get('/user/:id', restUserController.user_detail);
+router.post('/user/get', restUserController.user_detail_post);
 
 /* GET request for list of all Users. */
 router.get('/users/:userName', restUserController.user_list);

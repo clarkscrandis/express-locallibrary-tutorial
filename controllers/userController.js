@@ -14,7 +14,17 @@ exports.user_list = function(req, res) {
 
 // Display detail page for a specific User
 exports.user_detail = function(req, res) {
-	res.send('NOT IMPLEMENTED: User detail' + req.params.id);
+	
+	callRestGetUsersEndpoint(req, function(err, result){
+		if (err){
+			res.send(500, {error: 'something blew up when calling: http://localhost:3000/REST/user/get', response: result});
+		} else {
+			//res.send(result);
+		    res.render('user_detail', { title: 'User Detail', user: result } );
+
+		}
+	});
+	//res.send('NOT IMPLEMENTED: User detail' + req.params.id);
 };
 
 //Display User create form on GET
@@ -45,7 +55,7 @@ exports.user_create_post = function(req, res) {
     		if (err){
     			res.send(500, {error: 'something blew up when calling: http://localhost:3000/REST/user/create', response: result});
     		} else {
-    			res.send(result);
+                res.redirect('/catalog/user/'+result[0].userId);
     		}
     	});
 
@@ -53,9 +63,9 @@ exports.user_create_post = function(req, res) {
 };
 
 var callRestUserEndpoint = function (req, callback){
-	var createUserData = { first_name: req.body.first_name, 
+	var createUserData = [{ first_name: req.body.first_name, 
 		        		   family_name: req.body.family_name
-		       			 };
+		       			 }];
 	//var jsonContent = JSON.stringify(createUserData);
 	
 	var url = 'http://localhost:3000/REST/user/create';
@@ -75,6 +85,28 @@ var callRestUserEndpoint = function (req, callback){
 	    }
 	})
 }
+
+var callRestGetUsersEndpoint = function (req, callback){
+	var getUserRequestData = [{userId: req.params.id}];
+	
+	var url = 'http://localhost:3000/REST/user/get';
+		
+	//fire request
+	request({
+	        url: url,
+	        method: "POST",
+	        json: getUserRequestData
+	}, function (error, response, body) {
+	    if (!error && response.statusCode === 200) {
+	        callback(null, body);
+	    }
+	    else {
+	    	console.log(body);
+	    	callback(error, body);
+	    }
+	})
+}
+
 
 // Display User delete form on GET
 exports.user_delete_get = function(req, res) {

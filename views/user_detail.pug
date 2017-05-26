@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  h1 User: #{user.first_name}
+  p #{user.family_name}
+  
+  div(style='margin-left:20px;margin-top:20px')
+
+  hr
+  p
+    a(href='/catalog/user/'+user.userId+'/delete') Delete user
+  p
+    a(href='/catalog/user/'+user.userId+'/update') Update user
