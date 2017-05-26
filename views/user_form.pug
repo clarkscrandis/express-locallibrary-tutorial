@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='first_name') First Name:
+      input#first_name.form-control(type='text', placeholder='First name (Christian) last' name='first_name' required='true' value=(undefined===user ? '' : user.first_name))
+    div.form-group
+      label(for='family_name') Last Name:
+      input#family_name.form-control(type='text', placeholder='Family name (surname)' name='family_name' required='true' value=(undefined===user ? '' : user.family_name) )
+    div.form-group
+    button.btn.btn-primary(type='submit') Submit
+  if errors 
+    ul
+      for error in errors
+        li!= error.msg
