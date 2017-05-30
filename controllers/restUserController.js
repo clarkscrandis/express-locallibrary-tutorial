@@ -6,29 +6,16 @@ exports.user_list = function(req, res) {
 	res.send('NOT IMPLEMENTED: User list');
 };
 
-// Display detail page for a specific User
+// Display detail for a specific User
 exports.user_detail_post = function(req, res) {
+	// TODO: Need to validate json data in the body.
 	var errors = 0
     
     if (errors) {
-// TODO: Need to replace this with a meaningful RESTful error response
-    	res.render('user_form', { title: 'Create User', user: user, errors: errors}); 
-    return;
+        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
     } 
     else {
-    // Data from form is valid
-
-/*    
-        var user = { first_name: req.body.first_name, 
-        	         family_name: req.body.family_name
-        	       };
-        
-        var pyOptions = {
-                scriptPath : '../pythonExperiment',
-                pythonOptions: '-u',
-                args: ['add', JSON.stringify(user)]
-            };
-*/
+    	// Data from request is valid
 		var dataToSend = req.body;
 		var txtToSend = JSON.stringify(dataToSend)
 		console.log(txtToSend);
@@ -38,73 +25,66 @@ exports.user_detail_post = function(req, res) {
                 pythonOptions: '-u',
                 args: ['get', txtToSend]
             };
+        PythonShell.run('users.py', pyOptions, function(err, results){
+            if (err) {
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
+            } else {
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0].length == 0){
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204).send(results[0]);
+            		} else {
+            			res.send(results[0]);
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
+/*      
+  		// Alternative technique for calling python and processing the result(s)
         var shell = new PythonShell('users.py', pyOptions);
         var output = '';
+        var errOutput = '';
         shell.on('message', function(message) {
             console.log('FROM PYTHON: ' + message);
-            output += ''+message;
+            output += ' '+message;
             //one message for each print
-//            res.send(message);
         });
         shell.on('error', function(message) {
         	console.log('ERROR FROM PYTHON: ' + message);
-        	//one message for each stderr.write
-        	//Need to display the error message in a pop-up
+        	errOutput += ' '+message;
+        	//one message for each stderr.write (sometimes)
         });
         shell.end(function(err) {
             if (err) {
-                console.log(err);
+                res.status(500).send({error: 'Error message: ' + err, debug: err});
             } else {
             	console.log('Total output:' + output)
             	res.send(output);
             }
         }); 
-//        res.send(message);
-//        res.send('Wish I knew the proper way to implement a model for saving data!');
+*/
     }
-	//res.send('NOT IMPLEMENTED: User detail');
 };
 
 //Display User create form on GET
 exports.user_create_get = function(req, res) {
-    res.render('user_form', { title: 'Create User'});
+	res.send('NOT IMPLEMENTED: User create GET');
 };
 
 // Handle User create on POST
 exports.user_create_post = function(req, res) {
-// Need to replace this code and pull json data out of the body.
-/*
-    req.checkBody('first_name', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
-    req.checkBody('family_name', 'Family name must be specified.').notEmpty();
-    req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
-    
-    req.sanitize('first_name').escape();
-    req.sanitize('family_name').escape();
-    req.sanitize('first_name').trim();     
-    req.sanitize('family_name').trim();
-
-    var errors = req.validationErrors();
-*/
+// TODO: Need to validate json data in the body.
 	var errors = 0
 	    
     if (errors) {
-        res.render('user_form', { title: 'Create User', user: user, errors: errors});
-    return;
+        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
     } 
     else {
-    // Data from form is valid
-
-/*    
-        var user = { first_name: req.body.first_name, 
-        	         family_name: req.body.family_name
-        	       };
-        
-        var pyOptions = {
-                scriptPath : '../pythonExperiment',
-                pythonOptions: '-u',
-                args: ['add', JSON.stringify(user)]
-            };
-*/
+    	// Data from request is valid
 		var dataToSend = req.body;
 		var txtToSend = JSON.stringify(dataToSend)
 		
@@ -113,29 +93,24 @@ exports.user_create_post = function(req, res) {
                 pythonOptions: '-u',
                 args: ['add', txtToSend]
             };
-        var shell = new PythonShell('users.py', pyOptions);
-        var output = '';
-        shell.on('message', function(message) {
-            console.log('FROM PYTHON: ' + message);
-            output += ''+message;
-            //one message for each print
-//            res.send(message);
-        });
-        shell.on('error', function(message) {
-        	console.log('ERROR FROM PYTHON: ' + message);
-        	//one message for each stderr.write
-        	//Need to display the error message in a pop-up
-        });
-        shell.end(function(err) {
+        PythonShell.run('users.py', pyOptions, function(err, results){
             if (err) {
-                console.log(err);
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
             } else {
-            	console.log('Total output:' + output)
-            	res.send(output);
-            }
-        }); 
-//        res.send(message);
-//        res.send('Wish I knew the proper way to implement a model for saving data!');
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0].length == 0){
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204).send(results[0]);
+            		} else {
+            			res.send(results[0]);
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
     }
 };
 
