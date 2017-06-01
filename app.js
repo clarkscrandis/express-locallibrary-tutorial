@@ -11,6 +11,8 @@ var users = require('./routes/users');
 var catalog = require('./routes/catalog');
 var restfulInterface = require('./routes/restfulInterface')
 
+// To debug, launch with: DEBUG=express-locallibrary-tutorial:* npm run devstart
+// or: nodemon --debug ./bin/www
 /*
 var User = require('./models/user');
 

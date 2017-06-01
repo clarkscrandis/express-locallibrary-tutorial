@@ -8,9 +8,36 @@ var REST_ADDR = 'http://localhost:3000'
 
 // Display list of all Users
 exports.user_list = function(req, res) {
-	User.getSuggestions(req.params.userName).then(function (result) {
-		res.json(result)
-	});
+
+	var url = REST_ADDR + '/REST/users';
+		
+	//fire request
+	request({
+	        url: url,
+	        method: "GET"
+	}, function (err, response, body) {
+	    if (!err && response.statusCode === 200) {
+	    	if (!body){
+				var error = new Error('No data returned from server while performing http://localhost:3000/REST/users');
+				error.status = response.statusCode;
+				next(error);
+	    	} else {
+				userList = JSON.parse(body);
+			    res.render('user_list', { title: 'User List', userList: userList } );
+	    	}
+	    } else if (!err && response.statusCode === 204) {
+//	        var user = { email: req.params.id + " Not Found",
+//	    	         	lastName: '',
+//	    	         	firstName: ''
+//	    	       		};
+		    res.render('user_notFound', { title: 'No Users Not Found' } );
+	    } else {
+			var error = new Error('Error occurred while performing http://localhost:3000/REST/users');
+			error.status = response.statusCode;
+			error.stack = JSON.stringify(body);
+			next(error);
+	    }
+	})
 //	res.send('NOT IMPLEMENTED: User list');
 };
 
@@ -34,13 +61,15 @@ exports.user_detail = function(req, res, next) {
 				next(error);
 	    	} else {
 				var userList = body;
+				//console.log(userList[0])
 			    res.render('user_detail', { title: 'User Detail', user: userList[0] } );
 	    	}
 	    } else if (!err && response.statusCode === 204) {
-	        var user = { first_name: req.params.id + " Not Found",
-	    	         	family_name: ''
-	    	       		};
-		    res.render('user_detail', { title: 'User Detail', user: user } );
+//	        var user = { email: req.params.id + " Not Found",
+//	    	         	lastName: '',
+//	    	         	firstName: ''
+//	    	       		};
+		    res.render('user_notFound', { title: 'User Not Found', userId: req.params.id } );
 	    } else {
 			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/get');
 			error.status = response.statusCode;
@@ -58,19 +87,24 @@ exports.user_create_get = function(req, res) {
 // Handle User create on POST
 exports.user_create_post = function(req, res, next) {
 	//Validate form data
-    req.checkBody('first_name', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
-    req.checkBody('family_name', 'Family name must be specified.').notEmpty();
-    req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
+    req.checkBody('firstName', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
+    req.checkBody('lastName', 'Family name must be specified.').notEmpty();
+    req.checkBody('email', 'Email address must be specified.').notEmpty();
+    req.checkBody('lastName', 'Family name must be alphanumeric text.').isAlpha();
+    req.checkBody('email', 'Need a valid email address.').isEmail();
     
-    req.sanitize('first_name').escape();
-    req.sanitize('family_name').escape();
-    req.sanitize('first_name').trim();     
-    req.sanitize('family_name').trim();
+    req.sanitize('firstName').escape();
+    req.sanitize('lastName').escape();
+    req.sanitize('email').escape();
+    req.sanitize('firstName').trim();     
+    req.sanitize('lastName').trim();
+    req.sanitize('email').trim();
 
     var errors = req.validationErrors();
 
-    var user = { first_name: req.body.first_name,
-    	         family_name: req.body.family_name
+    var user = { firstName: req.body.firstName,
+    	         lastName: req.body.lastName,
+    	         email: req.body.email
     	       };
 
     if (errors) {
@@ -110,19 +144,19 @@ exports.user_create_post = function(req, res, next) {
 /*
 exports.user_create_post = function(req, res, next) {
 	//Validate form data
-    req.checkBody('first_name', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
-    req.checkBody('family_name', 'Family name must be specified.').notEmpty();
-    req.checkBody('family_name', 'Family name must be alphanumeric text.').isAlpha();
+    req.checkBody('firstName', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
+    req.checkBody('lastName', 'Family name must be specified.').notEmpty();
+    req.checkBody('lastName', 'Family name must be alphanumeric text.').isAlpha();
     
-    req.sanitize('first_name').escape();
-    req.sanitize('family_name').escape();
-    req.sanitize('first_name').trim();     
-    req.sanitize('family_name').trim();
+    req.sanitize('firstName').escape();
+    req.sanitize('lastName').escape();
+    req.sanitize('firstName').trim();     
+    req.sanitize('lastName').trim();
 
     var errors = req.validationErrors();
 
-    var user = { first_name: req.body.first_name,
-    	         family_name: req.body.family_name
+    var user = { firstName: req.body.firstName,
+    	         lastName: req.body.lastName
     	       };
 
     if (errors) {
@@ -148,8 +182,8 @@ exports.user_create_post = function(req, res, next) {
 };
 
 var callRestUserEndpoint = function (req, callback){
-	var createUserData = [{ first_name: req.body.first_name, 
-		        		   family_name: req.body.family_name
+	var createUserData = [{ firstName: req.body.firstName, 
+		        		   lastName: req.body.lastName
 		       			 }];
 	//var jsonContent = JSON.stringify(createUserData);
 	
@@ -173,12 +207,68 @@ var callRestUserEndpoint = function (req, callback){
 
 // Display User delete form on GET
 exports.user_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: User delete GET');
+	var getUserRequestData = [{userId: req.params.id}];
+	
+	var url = REST_ADDR + '/REST/user/get';
+		
+	//fire request
+	request({
+	        url: url,
+	        method: "POST",
+	        json: getUserRequestData
+	}, function (err, response, body) {
+	    if (!err && response.statusCode === 200) {
+	    	if (!body){
+				var error = new Error('No data returned from server while performing http://localhost:3000/REST/user/get');
+				error.status = response.statusCode;
+				next(error);
+	    	} else {
+				var userList = body;
+				//console.log(userList[0])
+			    res.render('user_delete', { title: 'Delete User', user: userList[0] } );
+	    	}
+	    } else if (!err && response.statusCode === 204) {
+		    res.render('user_notFound', { title: 'User Not Found', userId: req.params.id } );
+	    } else {
+			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/get');
+			error.status = response.statusCode;
+			error.stack = JSON.stringify(body);
+			next(error);
+	    }
+	})
 };
 
 // Handle User delete on POST
 exports.user_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: User delete POST');
+    req.checkBody('userId', 'User id must exist').notEmpty();
+    var errors = req.validationErrors();
+
+    var user = { userId : req.body.userId };
+
+    if (errors) {
+    	// Data from form is NOT valid. Reload the form and display the errors.
+        res.render('user_delete', { title: 'User Not Found' } );// this isn't quite right
+        return;
+    } else {
+    	// Data from form is valid. Call the restful end point.
+    	var createUserData = [user];
+    	var url = REST_ADDR + '/REST/user/' + req.body.userId + 'delete';
+
+		//fire REST request
+		request({
+					url: url,
+					method: "GET"
+				}, function (err, response, body) {
+					if (!err && response.statusCode === 200) {
+						res.redirect('/catalog/user');
+					} else {
+		    			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/create');
+		    			error.status = response.statusCode;
+		    			error.stack = JSON.stringify(body);
+		    			next(error);
+					}
+				})
+    }
 };
 
 // Display User update form on GET

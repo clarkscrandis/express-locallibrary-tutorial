@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{user.userId}
+  p= user.email
+  
+  p Do you really want to delete this User?
+    
+    form(method='POST' action='')
+      div.form-group
+        input#authorid.form-control(type='hidden',name='userId', required='true', value=user.userId )
+
+      button.btn.btn-primary(type='submit') Delete

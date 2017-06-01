@@ -3,7 +3,38 @@ var PythonShell = require('python-shell')
 
 // Display list of all Users
 exports.user_list = function(req, res) {
-	res.send('NOT IMPLEMENTED: User list');
+	// Data from request is valid
+	var txtToSend = '{}'
+	console.log(txtToSend);
+	
+    var pyOptions = {
+            scriptPath : '../pythonExperiment',
+            pythonOptions: '-u',
+            args: ['getAll', txtToSend]
+        };
+    PythonShell.run('users.py', pyOptions, function(err, results){
+        if (err) {
+            res.status(500).send({error: 'Python error: ' + err, debug: err});
+        } else {
+        	//results are an array of messages sent to stdout. When working properly, we should only have one.
+        	if (results.length == 1) {
+        		if (results[0].length == 0){
+        			// If nothing is returned, send a 204 indicating No Content...because this not OK
+        			res.status(204).send(results[0]);
+        		} else {
+        			returnValue = JSON.parse(results[0]);
+        			if (returnValue.foundUserList.length == 0) {
+        				res.status(204).send(JSON.stringify(returnValue.missingUserIdList))
+        			} else {
+        				res.send(JSON.stringify(returnValue.foundUserList));
+        			}
+        		}
+        	} else {
+        		// Must have left some debugging prints in the Python code
+        		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+        	}
+        }        	
+    });
 };
 
 // Display detail for a specific User
@@ -35,7 +66,12 @@ exports.user_detail_post = function(req, res) {
             			// If nothing is returned, send a 204 indicating No Content...because this not OK
             			res.status(204).send(results[0]);
             		} else {
-            			res.send(results[0]);
+            			returnValue = JSON.parse(results[0]);
+            			if (returnValue.foundUserList.length == 0) {
+            				res.status(204).send(JSON.stringify(returnValue.missingUserIdList))
+            			} else {
+            				res.send(JSON.stringify(returnValue.foundUserList));
+            			}
             		}
             	} else {
             		// Must have left some debugging prints in the Python code
@@ -103,7 +139,8 @@ exports.user_create_post = function(req, res) {
             			// If nothing is returned, send a 204 indicating No Content...because this not OK
             			res.status(204).send(results[0]);
             		} else {
-            			res.send(results[0]);
+            			returnValue = JSON.parse(results[0]);
+            			res.send(JSON.stringify(returnValue.addedUserList));
             		}
             	} else {
             		// Must have left some debugging prints in the Python code
@@ -116,7 +153,39 @@ exports.user_create_post = function(req, res) {
 
 // Display User delete form on GET
 exports.user_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: User delete GET');
+	var errors = 0
+    
+    if (errors) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+    } 
+    else {
+    	// Data from request is valid
+		var txtToSend = req.params.id
+		
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['delete', txtToSend]
+            };
+        PythonShell.run('users.py', pyOptions, function(err, results){
+            if (err) {
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
+            } else {
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0] == 'SUCCESS'){
+            			res.status(200);
+            		} else {
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204);
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
+    }
 };
 
 // Handle User delete on POST

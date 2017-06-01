@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1= title
+  
+  ul
+  each user in userList
+    li 
+      a(href='http://localhost:3000/catalog/user/'+user.userId) #{user.userId}
+      | #{user.email} 
+      | #{user.lastName} 
+      | (#{user.firstName})
+
+  else
+    li There are no users.

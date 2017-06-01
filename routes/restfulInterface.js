@@ -28,6 +28,6 @@ router.post('/user/:id/update', restUserController.user_update_post);
 router.post('/user/get', restUserController.user_detail_post);
 
 /* GET request for list of all Users. */
-router.get('/users/:userName', restUserController.user_list);
+router.get('/users', restUserController.user_list);
 
 module.exports = router;
