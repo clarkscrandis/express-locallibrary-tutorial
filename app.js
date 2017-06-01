@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
+var PythonShell = require('python-shell')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -43,6 +44,37 @@ user.indexExists().then(function (exists) {
     });
 });
 */
+
+/* Make sure dependencies exist, otherwise, don't start the server
+ * 
+ */
+var txtToSend = "{}"
+
+var pyOptions = {
+        scriptPath : '../pythonExperiment',
+        pythonOptions: '-u',
+        args: ['init', txtToSend]
+    };
+PythonShell.run('users.py', pyOptions, function(err, results){
+    if (err) {
+        console.log('Unable to initialize python backend: ../pythonExperiment/users.py');
+		console.log(err)
+        process.exit(1);
+    } else {
+    	//results are an array of messages sent to stdout. When working properly, we should only have one.
+    	if (results.length == 1) {
+    		if (results[0] != 'OK'){
+    			console.log(results)
+    	        process.exit(1);
+    		}
+    	} else {
+    		// Must have left some debugging prints in the Python code
+            console.log('WARNING: Some debugging prints were left in the python initialization code:');
+    		console.log(results)
+    	}
+    }        	
+});
+
 var app = express();
 
 // view engine setup

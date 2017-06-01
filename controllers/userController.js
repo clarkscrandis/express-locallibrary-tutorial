@@ -132,6 +132,7 @@ exports.user_create_post = function(req, res, next) {
 							res.redirect('/catalog/user/'+userList[0].userId);
 				    	}
 					} else {
+						//TODO: In the case of a 409 status code, we tried to create a user with an email address that is already in the system. We should update the UI to handle this.
 		    			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/create');
 		    			error.status = response.statusCode;
 		    			error.stack = JSON.stringify(body);
@@ -239,7 +240,7 @@ exports.user_delete_get = function(req, res) {
 };
 
 // Handle User delete on POST
-exports.user_delete_post = function(req, res) {
+exports.user_delete_post = function(req, res, next) {
     req.checkBody('userId', 'User id must exist').notEmpty();
     var errors = req.validationErrors();
 
@@ -252,7 +253,7 @@ exports.user_delete_post = function(req, res) {
     } else {
     	// Data from form is valid. Call the restful end point.
     	var createUserData = [user];
-    	var url = REST_ADDR + '/REST/user/' + req.body.userId + 'delete';
+    	var url = REST_ADDR + '/REST/user/' + req.body.userId + '/delete';
 
 		//fire REST request
 		request({

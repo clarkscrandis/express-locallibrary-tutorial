@@ -140,7 +140,11 @@ exports.user_create_post = function(req, res) {
             			res.status(204).send(results[0]);
             		} else {
             			returnValue = JSON.parse(results[0]);
-            			res.send(JSON.stringify(returnValue.addedUserList));
+            			if (returnValue.existingUserList.length > 0){
+            				res.status(409).send(JSON.stringify(returnValue));
+            			} else {
+            				res.send(JSON.stringify(returnValue.addedUserList));
+            			}
             		}
             	} else {
             		// Must have left some debugging prints in the Python code
@@ -160,7 +164,8 @@ exports.user_delete_get = function(req, res) {
     } 
     else {
     	// Data from request is valid
-		var txtToSend = req.params.id
+		var dataToSend = [{userId : req.params.id}];
+		var txtToSend = JSON.stringify(dataToSend);
 		
         var pyOptions = {
                 scriptPath : '../pythonExperiment',
@@ -173,11 +178,16 @@ exports.user_delete_get = function(req, res) {
             } else {
             	//results are an array of messages sent to stdout. When working properly, we should only have one.
             	if (results.length == 1) {
-            		if (results[0] == 'SUCCESS'){
-            			res.status(200);
-            		} else {
+            		if (results[0].length == 0){
             			// If nothing is returned, send a 204 indicating No Content...because this not OK
-            			res.status(204);
+            			res.status(204).send(results[0]);
+            		} else {
+            			returnValue = JSON.parse(results[0]);
+            			if (returnValue.missingUserIdList.length > 0){
+            				res.status(409).send(JSON.stringify(returnValue));
+            			} else {
+            				res.send(JSON.stringify(returnValue.deletedUserIdList));
+            			}
             		}
             	} else {
             		// Must have left some debugging prints in the Python code
