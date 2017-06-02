@@ -129,7 +129,7 @@ exports.user_create_post = function(req, res, next) {
 							next(error);
 				    	} else {
 							var userList = body;
-							res.redirect('/catalog/user/'+userList[0].userId);
+							res.redirect('/UI/user/'+userList[0].userId);
 				    	}
 					} else {
 						//TODO: In the case of a 409 status code, we tried to create a user with an email address that is already in the system. We should update the UI to handle this.
@@ -175,7 +175,7 @@ exports.user_create_post = function(req, res, next) {
     			next(error);
 
     		} else {
-                res.redirect('/catalog/user/'+result[0].userId);
+                res.redirect('/UI/user/'+result[0].userId);
     		}
     	});
 
@@ -261,7 +261,7 @@ exports.user_delete_post = function(req, res, next) {
 					method: "GET"
 				}, function (err, response, body) {
 					if (!err && response.statusCode === 200) {
-						res.redirect('/catalog/user');
+						res.redirect('/UI/user');
 					} else {
 		    			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/create');
 		    			error.status = response.statusCode;
@@ -274,10 +274,95 @@ exports.user_delete_post = function(req, res, next) {
 
 // Display User update form on GET
 exports.user_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: User update GET');
+	var getUserRequestData = [{userId: req.params.id}];
+	
+	var url = REST_ADDR + '/REST/user/get';
+		
+	//fire request
+	request({
+	        url: url,
+	        method: "POST",
+	        json: getUserRequestData
+	}, function (err, response, body) {
+	    if (!err && response.statusCode === 200) {
+	    	if (!body){
+				var error = new Error('No data returned from server while getting data associated with user: '+ req.params.id);
+				error.status = response.statusCode;
+				next(error);
+	    	} else {
+				var userList = body;
+				//console.log(userList[0])
+			    res.render('user_update_form', { title: 'Update User', user: userList[0] } );
+	    	}
+	    } else if (!err && response.statusCode === 204) {
+		    res.render('user_notFound', { title: 'User Not Found', userId: req.params.id } );
+	    } else {
+			var error = new Error('Error occurred while getting data associated with user: '+ req.params.id);
+			error.status = response.statusCode;
+			error.stack = JSON.stringify(body);
+			next(error);
+	    }
+	})
 };
 
 // Handle User update on POST
-exports.user_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: User update POST');
+exports.user_update_post = function(req, res, next) {
+	//Validate form data
+    req.checkBody('firstName', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
+    req.checkBody('lastName', 'Family name must be specified.').notEmpty();
+    req.checkBody('email', 'Email address must be specified.').notEmpty();
+    req.checkBody('lastName', 'Family name must be alphanumeric text.').isAlpha();
+    req.checkBody('email', 'Need a valid email address.').isEmail();
+    
+    req.sanitize('firstName').escape();
+    req.sanitize('lastName').escape();
+    req.sanitize('email').escape();
+    req.sanitize('psermissionSet').escape();
+    req.sanitize('firstName').trim();     
+    req.sanitize('lastName').trim();
+    req.sanitize('email').trim();
+    req.sanitize('psermissionSet').trim();
+
+    var errors = req.validationErrors();
+
+    var user = { firstName: req.body.firstName,
+    	         lastName: req.body.lastName,
+    	         email: req.body.email,
+    	         permissionSet: req.body.permissionSet,
+    	         userId: req.params.id
+    	       };
+
+    if (errors) {
+    	// Data from form is NOT valid. Reload the form and display the errors.
+        res.render('user_update_form', { title: 'Update User', user: user, errors: errors});
+        return;
+    } else {
+    	// Data from form is valid. Call the restful end point.
+    	var updateUserData = user;
+    	var url = REST_ADDR + '/REST/user/' + req.params.id + '/update';
+
+		//fire REST request
+		request({
+					url: url,
+					method: "POST",
+					json: updateUserData
+				}, function (err, response, body) {
+					if (!err && response.statusCode === 200) {
+				    	if (!body){
+							var error = new Error('No data returned from server while performing ' + url);
+							error.status = response.statusCode;
+							next(error);
+				    	} else {
+							var user = body;
+							res.redirect('/UI/user/'+user.userId);
+				    	}
+					} else {
+						//TODO: In the case of a 409 status code, we tried to create a user with an email address that is already in the system. We should update the UI to handle this.
+		    			var error = new Error('Error occurred while performing ' + url);
+		    			error.status = response.statusCode;
+		    			error.stack = JSON.stringify(body);
+		    			next(error);
+					}
+				})
+    }
 };

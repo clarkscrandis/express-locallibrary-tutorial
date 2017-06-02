@@ -205,10 +205,85 @@ exports.user_delete_post = function(req, res) {
 
 // Display User update form on GET
 exports.user_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: User update GET');
+	var errors = 0
+    
+    if (errors) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+    } 
+    else {
+    	// Data from request is valid
+    	user = {};
+    	commandlineParams = req.query;
+    	Object.keys(commandlineParams).forEach(key => {
+    		if (commandlineParams[key]) {
+    			user[key] = commandlineParams[key];
+    		}
+    	});
+    	user['userId'] = req.params.id;
+    	txtToSend = JSON.stringify(user);
+		
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['update', txtToSend]
+            };
+        PythonShell.run('users.py', pyOptions, function(err, results){
+            if (err) {
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
+            } else {
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0].length == 0){
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204).send(results[0]);
+            		} else {
+            			res.send(results[0]);
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
+    }
 };
 
 // Handle User update on POST
 exports.user_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: User update POST');
+	// TODO: Need to validate json data in the body.
+	var errors = 0
+	    
+    if (errors) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+    } 
+    else {
+    	// Data from request is valid
+		var dataToSend = req.body;
+		var txtToSend = JSON.stringify(dataToSend)
+		
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['update', txtToSend]
+            };
+		console.log(txtToSend)
+        PythonShell.run('users.py', pyOptions, function(err, results){
+            if (err) {
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
+            } else {
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0].length == 0){
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204).send(results[0]);
+            		} else {
+            			res.send(results[0]);
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
+    }
 };

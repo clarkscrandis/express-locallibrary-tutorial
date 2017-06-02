@@ -9,7 +9,7 @@ var PythonShell = require('python-shell')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var catalog = require('./routes/catalog');
+var uiInterface = require('./routes/uiInterface');
 var restfulInterface = require('./routes/restfulInterface')
 
 // To debug, launch with: DEBUG=express-locallibrary-tutorial:* npm run devstart
@@ -92,7 +92,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/catalog', catalog);
+app.use('/UI', uiInterface);
 app.use('/REST', restfulInterface);
 
 // catch 404 and forward to error handler
