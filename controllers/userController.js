@@ -1,5 +1,4 @@
 //var User = require('../models/user');
-var User = require('../models/user');
 var PythonShell = require('python-shell');
 var request = require("request");
 var async = require('async');
@@ -45,9 +44,8 @@ exports.user_list = function(req, res) {
 exports.user_detail = function(req, res, next) {
 
 	var getUserRequestData = [{userId: req.params.id}];
-	
 	var url = REST_ADDR + '/REST/user/get';
-		
+	
 	//fire request
 	request({
 	        url: url,
