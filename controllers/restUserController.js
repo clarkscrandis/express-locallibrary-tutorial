@@ -1,7 +1,9 @@
 var PythonShell = require('python-shell')
-
+var validate = require('jsonschema').validate;
 
 // Display list of all Users
+//GET: http://localhost:3000/REST/users
+//body: N/A
 exports.user_list = function(req, res) {
 	// Data from request is valid
 	var txtToSend = '{}'
@@ -38,16 +40,33 @@ exports.user_list = function(req, res) {
 };
 
 // Display detail for a specific User
+//POST: http://localhost:3000/REST/user/get 
+//body: [{"userId":"AVxlGsexxZVa2KAs0CWh"}]
 exports.user_detail_post = function(req, res) {
-	// TODO: Need to validate json data in the body.
-	var errors = 0
-    
-    if (errors) {
-        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+	var getUserSchema = { 
+			"type":"array",
+			"items":{
+				"type":"object",
+				"additionalProperties": false,
+				"properties": {
+					"userId":{"allOf":[
+						{"minLength":1},
+						{"maxLength":100}]
+					}
+					
+				},
+				"required":["userId"]
+			}
+		};
+
+	var dataToSend = req.body;
+	result = validate(dataToSend, getUserSchema);
+
+	if (!result.valid) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: result.errors});
     } 
     else {
     	// Data from request is valid
-		var dataToSend = req.body;
 		var txtToSend = JSON.stringify(dataToSend)
 		console.log(txtToSend);
 		
@@ -112,16 +131,44 @@ exports.user_create_get = function(req, res) {
 };
 
 // Handle User create on POST
+//POST: http://localhost:3000/REST/user/create 
+//body: [{"firstName":"bogusFirstName","lastName":"bogusLastName","email":"name@company.com"}]
 exports.user_create_post = function(req, res) {
-// TODO: Need to validate json data in the body.
-	var errors = 0
-	    
-    if (errors) {
-        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+	var getUserSchema = { 
+			"type":"array",
+			"items":{
+				"type":"object",
+				"additionalProperties": false,
+				"properties": {
+					"firstName":{"allOf":[
+						{"type":"string"},
+						{"maxLength":100}]
+					},
+					"lastName":{"allOf":[
+						{"type":"string"},
+						{"maxLength":100}]
+					},
+					"email":{"allOf":[
+						{"type":"string"},
+						{"format":"email"},
+						{"minLength":1},
+						{"maxLength":100}]
+					},
+					
+				},
+				"required":["email"]
+			}
+		};
+
+	var dataToSend = req.body;
+	
+	result = validate(dataToSend, getUserSchema);
+
+	if (!result.valid) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: result.errors});
     } 
     else {
     	// Data from request is valid
-		var dataToSend = req.body;
 		var txtToSend = JSON.stringify(dataToSend)
 		
         var pyOptions = {
@@ -155,12 +202,16 @@ exports.user_create_post = function(req, res) {
     }
 };
 
-// Display User delete form on GET
+// Handle User delete on GET
+//GET: http://localhost:3000/REST/user/<userId>/delete 
+//body: N/A
 exports.user_delete_get = function(req, res) {
-	var errors = 0
+	var userId = req.params.id;
     
-    if (errors) {
-        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+	userId = userId.replace(/\s/g,''); //Remove white spaces.
+	
+    if (!userId.length) {
+        res.status(400).send({error: 'You need to specify a userId to delete: ', debug: 'REST/user/<userId>/delete'});
     } 
     else {
     	// Data from request is valid
@@ -199,28 +250,145 @@ exports.user_delete_get = function(req, res) {
 };
 
 // Handle User delete on POST
+//POST: http://localhost:3000/REST/user/<userId>/delete 
+//body: N/A
 exports.user_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: User delete POST');
-};
-
-// Display User update form on GET
-exports.user_update_get = function(req, res) {
-	var errors = 0
+	var userId = req.params.id;
     
-    if (errors) {
-        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+	userId = userId.replace(/\s/g,''); //Remove white spaces.
+	
+    if (!userId.length) {
+        res.status(400).send({error: 'You need to specify a userId to delete: ', debug: 'REST/user/<userId>/delete'});
     } 
     else {
     	// Data from request is valid
-    	user = {};
-    	commandlineParams = req.query;
-    	Object.keys(commandlineParams).forEach(key => {
-    		if (commandlineParams[key]) {
-    			user[key] = commandlineParams[key];
-    		}
-    	});
-    	user['userId'] = req.params.id;
-    	txtToSend = JSON.stringify(user);
+		var dataToSend = [{userId : req.params.id}];
+		var txtToSend = JSON.stringify(dataToSend);
+		
+        var pyOptions = {
+                scriptPath : '../pythonExperiment',
+                pythonOptions: '-u',
+                args: ['delete', txtToSend]
+            };
+        PythonShell.run('users.py', pyOptions, function(err, results){
+            if (err) {
+                res.status(500).send({error: 'Python error: ' + err, debug: err});
+            } else {
+            	//results are an array of messages sent to stdout. When working properly, we should only have one.
+            	if (results.length == 1) {
+            		if (results[0].length == 0){
+            			// If nothing is returned, send a 204 indicating No Content...because this not OK
+            			res.status(204).send(results[0]);
+            		} else {
+            			returnValue = JSON.parse(results[0]);
+            			if (returnValue.missingUserIdList.length > 0){
+            				res.status(409).send(JSON.stringify(returnValue));
+            			} else {
+            				res.send(JSON.stringify(returnValue.deletedUserIdList));
+            			}
+            		}
+            	} else {
+            		// Must have left some debugging prints in the Python code
+            		res.status(500).send({error: 'Too much data returned. Probably left some python debugging in place: ' + results})
+            	}
+            }        	
+        });
+    }
+};
+
+// Handle User update on GET
+//GET: http://localhost:3000/REST/user/<userId>/update?firstName=updatedName&contractIdSet=id1&contractIdSet=id2]
+//body: N/A
+exports.user_update_get = function(req, res) {
+	//NOTE: Id parameters are alphanumeric strings...and could be all numbers, so we can't restrict the type to a string.
+	var updateUserSchema = { 
+			"type":"object",
+			"additionalProperties": false,
+			"properties": {
+				"companyId":{"allOf":[
+					{"type":"string"},
+					{"minLength":1},
+					{"maxLength":100}]
+				},
+				"contractIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"email":{
+					"not": {}
+				},
+				"firstName":{"allOf":[
+					{"type":"string"},
+					{"maxLength":100}]
+				},
+				"lastName":{"allOf":[
+					{"type":"string"},
+					{"maxLength":100}]
+				},
+				"permissionSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"type":"string"},
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"searchIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"resumeIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"roleSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"type":"string"},
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"userId":{"allOf":[
+					{"minLength":1},
+					{"maxLength":100}]
+				}
+			},
+			"required":["userId"]
+		};
+
+	//Pull parameters out of the URL and put into structure for validation and to pass to the python code 
+	var dataToSend = {};
+	commandlineParams = req.query;
+	Object.keys(commandlineParams).forEach(key => {
+		if (commandlineParams[key]) {
+			dataToSend[key] = commandlineParams[key];
+		}
+	});
+	dataToSend['userId'] = req.params.id;
+	
+	result = validate(dataToSend, updateUserSchema);
+
+	if (!result.valid) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: result.errors});
+    } 
+	else {
+    	// Data from request is valid
+    	txtToSend = JSON.stringify(dataToSend);
 		
         var pyOptions = {
                 scriptPath : '../pythonExperiment',
@@ -249,16 +417,91 @@ exports.user_update_get = function(req, res) {
 };
 
 // Handle User update on POST
+// Make sure the Schema matches what is defined in the user init python code PLUS includes userId
+//POST: http://localhost:3000/REST/user/<userId>/update 
+//body: {"firstName":"bogusFirstName","lastName":"bogusLastName","userId":"123","contractIdSet":["AEF123"]}
 exports.user_update_post = function(req, res) {
-	// TODO: Need to validate json data in the body.
-	var errors = 0
-	    
-    if (errors) {
-        res.status(400).send({error: 'Poorly formatted request: ', debug: errors});
+	
+	//NOTE: Id parameters are alphanumeric strings...and could be all numbers, so we can't restrict the type to a string.
+	var updateUserSchema = { 
+			"type":"object",
+			"additionalProperties": false,
+			"properties": {
+				"companyId":{"allOf":[
+					{"type":"string"},
+					{"minLength":1},
+					{"maxLength":100}]
+				},
+				"contractIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"email":{
+					"not": {}
+				},
+				"firstName":{"allOf":[
+					{"type":"string"},
+					{"maxLength":100}]
+				},
+				"lastName":{"allOf":[
+					{"type":"string"},
+					{"maxLength":100}]
+				},
+				"permissionSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"type":"string"},
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"searchIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"resumeIdSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"roleSet":{
+					"type":"array",
+					"items":{
+						"allOf":[
+							{"type":"string"},
+							{"minLength":1},
+							{"maxLength":100}]
+					}
+				},
+				"userId":{"allOf":[
+					{"minLength":1},
+					{"maxLength":100}]
+				}
+			},
+			"required":["userId"]
+		};
+
+	var dataToSend = req.body;
+	
+	result = validate(dataToSend, updateUserSchema);
+
+	if (!result.valid) {
+        res.status(400).send({error: 'Poorly formatted request: ', debug: result.errors});
     } 
     else {
     	// Data from request is valid
-		var dataToSend = req.body;
 		var txtToSend = JSON.stringify(dataToSend)
 		
         var pyOptions = {
@@ -266,7 +509,7 @@ exports.user_update_post = function(req, res) {
                 pythonOptions: '-u',
                 args: ['update', txtToSend]
             };
-		console.log(txtToSend)
+		//console.log(txtToSend)
         PythonShell.run('users.py', pyOptions, function(err, results){
             if (err) {
                 res.status(500).send({error: 'Python error: ' + err, debug: err});
