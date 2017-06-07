@@ -31,7 +31,7 @@ router.get('/user/:id', user_controller.user_detail);
 router.get('/user', user_controller.user_list);
 
 /* GET request for list of all Users. */
-router.get('/', user_controller.user_list);
+router.get('/', user_controller.index);
 
 module.exports = router;
 

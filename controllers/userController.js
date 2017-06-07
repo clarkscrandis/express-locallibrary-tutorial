@@ -37,28 +37,25 @@ exports.user_list = function(req, res) {
 			next(error);
 	    }
 	})
-//	res.send('NOT IMPLEMENTED: User list');
 };
 
 // Display detail page for a specific User
 exports.user_detail = function(req, res, next) {
 
-	var getUserRequestData = [{userId: req.params.id}];
-	var url = REST_ADDR + '/REST/user/get';
+	var url = REST_ADDR + '/REST/users/' + req.params.id;
 	
 	//fire request
 	request({
 	        url: url,
-	        method: "POST",
-	        json: getUserRequestData
+	        method: "GET",
 	}, function (err, response, body) {
 	    if (!err && response.statusCode === 200) {
 	    	if (!body){
-				var error = new Error('No data returned from server while performing http://localhost:3000/REST/user/get');
+				var error = new Error('No data returned from server while performing: ' + url);
 				error.status = response.statusCode;
 				next(error);
 	    	} else {
-				var userList = body;
+				var userList = JSON.parse(body);
 				//console.log(userList[0])
 			    res.render('user_detail', { title: 'User Detail', user: userList[0] } );
 	    	}
@@ -112,7 +109,7 @@ exports.user_create_post = function(req, res, next) {
     } else {
     	// Data from form is valid. Call the restful end point.
     	var createUserData = [user];
-    	var url = REST_ADDR + '/REST/user/create';
+    	var url = REST_ADDR + '/REST/users';
 
 		//fire REST request
 		request({
@@ -208,13 +205,12 @@ var callRestUserEndpoint = function (req, callback){
 exports.user_delete_get = function(req, res) {
 	var getUserRequestData = [{userId: req.params.id}];
 	
-	var url = REST_ADDR + '/REST/user/get';
+	var url = REST_ADDR + '/REST/users' + req.params.id;
 		
 	//fire request
 	request({
 	        url: url,
-	        method: "POST",
-	        json: getUserRequestData
+	        method: "DELETE"
 	}, function (err, response, body) {
 	    if (!err && response.statusCode === 200) {
 	    	if (!body){
@@ -251,17 +247,17 @@ exports.user_delete_post = function(req, res, next) {
     } else {
     	// Data from form is valid. Call the restful end point.
     	var createUserData = [user];
-    	var url = REST_ADDR + '/REST/user/' + req.body.userId + '/delete';
+    	var url = REST_ADDR + '/REST/users/' + req.body.userId;
 
 		//fire REST request
 		request({
 					url: url,
-					method: "GET"
+					method: "DELETE"
 				}, function (err, response, body) {
 					if (!err && response.statusCode === 200) {
 						res.redirect('/UI/user');
 					} else {
-		    			var error = new Error('Error occurred while performing http://localhost:3000/REST/user/create');
+		    			var error = new Error('Error occurred while deleting user: '+ req.params.id);
 		    			error.status = response.statusCode;
 		    			error.stack = JSON.stringify(body);
 		    			next(error);
@@ -272,15 +268,12 @@ exports.user_delete_post = function(req, res, next) {
 
 // Display User update form on GET
 exports.user_update_get = function(req, res) {
-	var getUserRequestData = [{userId: req.params.id}];
-	
-	var url = REST_ADDR + '/REST/user/get';
+	var url = REST_ADDR + '/REST/users/' + req.params.id;
 		
 	//fire request
 	request({
 	        url: url,
-	        method: "POST",
-	        json: getUserRequestData
+	        method: "GET",
 	}, function (err, response, body) {
 	    if (!err && response.statusCode === 200) {
 	    	if (!body){
@@ -288,7 +281,7 @@ exports.user_update_get = function(req, res) {
 				error.status = response.statusCode;
 				next(error);
 	    	} else {
-				var userList = body;
+				var userList = JSON.parse(body);
 				//console.log(userList[0])
 			    res.render('user_update_form', { title: 'Update User', user: userList[0] } );
 	    	}
@@ -308,26 +301,20 @@ exports.user_update_post = function(req, res, next) {
 	//Validate form data
     req.checkBody('firstName', 'First name must be specified.').notEmpty(); //We won't force Alphanumeric, because people might have spaces.
     req.checkBody('lastName', 'Family name must be specified.').notEmpty();
-    req.checkBody('email', 'Email address must be specified.').notEmpty();
     req.checkBody('lastName', 'Family name must be alphanumeric text.').isAlpha();
-    req.checkBody('email', 'Need a valid email address.').isEmail();
     
     req.sanitize('firstName').escape();
     req.sanitize('lastName').escape();
-    req.sanitize('email').escape();
-    req.sanitize('psermissionSet').escape();
+    req.sanitize('permissionSet').escape();
     req.sanitize('firstName').trim();     
     req.sanitize('lastName').trim();
-    req.sanitize('email').trim();
-    req.sanitize('psermissionSet').trim();
+    req.sanitize('permissionSet').trim();
 
     var errors = req.validationErrors();
 
     var user = { firstName: req.body.firstName,
     	         lastName: req.body.lastName,
-    	         email: req.body.email,
-    	         permissionSet: req.body.permissionSet,
-    	         userId: req.params.id
+    	         permissionSet: [req.body.permissionSet]
     	       };
 
     if (errors) {
@@ -337,7 +324,7 @@ exports.user_update_post = function(req, res, next) {
     } else {
     	// Data from form is valid. Call the restful end point.
     	var updateUserData = user;
-    	var url = REST_ADDR + '/REST/user/' + req.params.id + '/update';
+    	var url = REST_ADDR + '/REST/users/' + req.params.id;
 
 		//fire REST request
 		request({
@@ -363,4 +350,32 @@ exports.user_update_post = function(req, res, next) {
 					}
 				})
     }
+};
+
+exports.index = function(req, res) {
+	var url = REST_ADDR + '/REST/counts';
+	
+	//fire request
+	request({
+	        url: url,
+	        method: "GET"
+	}, function (err, response, body) {
+	    if (!err && response.statusCode === 200) {
+	    	if (!body){
+				var error = new Error('No data returned from server while performing: ' + url);
+				error.status = response.statusCode;
+				next(error);
+	    	} else {
+				counts = JSON.parse(body);
+				res.render('index', { title: 'My experimental system', error: err, data: counts });
+	    	}
+	    } else if (!err && response.statusCode === 204) {
+	    	res.render('index', { title: 'System Home' });
+	    } else {
+			var error = new Error('Error occurred while performing: ' + url);
+			error.status = response.statusCode;
+			error.stack = JSON.stringify(body);
+			next(error);
+	    }
+	})
 };

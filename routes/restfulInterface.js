@@ -3,31 +3,34 @@ var router = express.Router();
 
 // Require controller modules
 var restUserController = require('../controllers/restUserController'); 
+var restCountController = require('../controllers/restCountController'); 
 
-/// User Routes ///
+/// RESTful User Routes ///
 
-/* GET request for creating User. NOTE This must come before route for id (i.e. display user) */
-router.get('/user/create', restUserController.user_create_get);
+/* GET list of all Users. */
+router.get('/users', restUserController.users_list);
 
-/* POST request for creating User. */
-router.post('/user/create', restUserController.user_create_post);
+/* Create User with a POST or PUT. */
+router.post('/users', restUserController.user_create);
+router.put('/users', restUserController.user_create);
 
-/* GET request to delete User. */
-router.get('/user/:id/delete', restUserController.user_delete_get);
+/* Delete User. */
+router.delete('/users/:userId', restUserController.user_delete);
 
-// POST request to delete User
-router.post('/user/:id/delete', restUserController.user_delete_post);
+/* Update User with POST or PUT. */
+router.put('/users/:userId', restUserController.user_update);
+router.post('/users/:userId', restUserController.user_update);
 
-/* GET request to update User. */
-router.get('/user/:id/update', restUserController.user_update_get);
+/* GET one User. */
+router.get('/users/:userId', restUserController.user_detail);
 
-// POST request to update User
-router.post('/user/:id/update', restUserController.user_update_post);
+/// RESTful Count Routes ///
 
-/* GET request for one User. */
-router.post('/user/get', restUserController.user_detail_post);
+/* GET Counts of all resources. */
+router.get('/counts', restCountController.counts_list);
 
-/* GET request for list of all Users. */
-router.get('/users', restUserController.user_list);
+/* GET count of the Users in the system */
+router.get('/counts/users', restCountController.count_of_users);
+
 
 module.exports = router;
