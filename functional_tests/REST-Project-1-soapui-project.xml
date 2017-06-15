@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="f5507b91-13ff-4dbe-823b-cbbfad2e3f40" activeEnvironment="Default" name="REST Project 1" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" resourceRoot="" defaultScriptLanguage="Groovy" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="1c213e8e-d930-4d89-b8d5-0da06239464d" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:3000" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://localhost:3000</con:endpoint></con:endpoints><con:resource name="Users" path="/REST/users/${#TestCase#userID}" id="564a3f17-9186-4ffa-a41a-da90c7fe151a"><con:settings/><con:parameters/><con:method name="Get User" id="2690baed-444c-4b3d-9514-22e57d42adb6" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>404</con:status><con:params/></con:representation><con:request name="Request 1" id="49edae29-0ca9-49fe-b4db-05156a28f652" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/REST/users</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Update User With Put" id="7c5f4b13-6218-4eee-a199-2618ea365376" method="PUT"><con:settings/><con:parameters/><con:request name="Request 1" id="b6e4da76-f619-4bb0-99be-3f0582bb6568" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Delete User" id="79fa373b-36c9-4db3-9dbd-546fc75d1433" method="DELETE"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:request name="Request 1" id="726f0c18-d54e-4c99-a6d1-7ff7dd121237" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="Update User With POST" id="7c5f4b13-6218-4eee-a199-2618ea365376" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="b6e4da76-f619-4bb0-99be-3f0582bb6568" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method></con:resource><con:resource name="users" path="/REST/users" id="c9d81d3f-43e3-4738-89cf-eb01f46e2a2a"><con:settings/><con:parameters/><con:method name="Create User" id="0720069a-5859-4eeb-b357-60d84f95b3fe" method="PUT"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html; charset=utf-8</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:user="http://localhost/REST/users">user:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:request name="Request 1" id="e400cdcb-6cea-4f40-acd8-01a3a9284e2a" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request>[{"firstName":"bogusFirstName","lastName":"bogusLastName","email":"name@company.com"}]</con:request><con:originalUri>http://localhost/REST/users</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="67b3f049-ee15-4f02-8fb5-2658e6669c68" name="UsersTestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="7ae1b621-1235-42b8-876d-58178c926e69" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Users-CRUD-Test" searchProperties="true" discardOkResults="true" timeout="0" wsrmEnabled="false" wsrmVersion="1.0" wsrmAckTo="" amfAuthorisation="false" amfEndpoint="" amfLogin="" amfPassword=""><con:description>Test the user list</con:description><con:settings/><con:testStep type="restrequest" name="Create-User" id="94578708-7eb8-420c-8b47-61169dcaef89"><con:settings/><con:config service="http://localhost:3000" methodName="Create User" resourcePath="/REST/users" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Create-User" id="d26b019c-0426-427b-9d46-84e19b8275c1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:3000</con:endpoint><con:request>[
+  {"firstName":"bogusFirstName",
+   "lastName":"bogusLastName",
+   "email":"name@company.com"}]
+</con:request><con:originalUri>http://localhost/REST/users</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="fc5c2df9-b8ab-4654-a502-e8769a290afd" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="795c59b6-1265-4b2b-9c7b-fce43979c7fe" name="Script Assertion" disabled="true"><con:configuration><scriptText>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${Create-User#Response}');
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+JsonNode responseSchemaJSON = mapper.readTree(new File("/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schema/createUserResponseSchema.txt").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+def test_Status=false
+
+ if (responseSchema.validInstance(responseJSON)) {
+
+  log.info("Response Structure Validated!")
+
+  test_Status=true
+} else {
+
+  log.info(responseSchema.validate(responseJSON).toString())
+
+}
+
+assert test_Status==true
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="5da4bac1-d5c8-471a-b6b3-5a7affc687e4" name="Valid Content Type"><con:configuration><scriptText>log.info messageExchange.responseHeaders["Content-Type"].toString().contains("application/json")
+
+assert messageExchange.responseHeaders["Content-Type"].toString().contains("application/json") == true</scriptText></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Valid Create-User Response Schema" id="8b41af03-4fee-422b-b8e1-d99c2c8e43d0"><con:settings/><con:config><script>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${Create-User#Response}');
+def pathname = testRunner.testCase.getPropertyValue("schemaPath")
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+JsonNode responseSchemaJSON = mapper.readTree(new File(pathname+"createUserResponseSchema.json").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+def test_Status=false
+
+ if (responseSchema.validInstance(responseJSON)) {
+
+  log.info("Create-User Response Structure Validated!")
+
+  test_Status=true
+} else {
+
+  log.info(responseSchema.validate(responseJSON).toString())
+
+}
+
+assert test_Status==true
+</script></con:config></con:testStep><con:testStep type="groovy" name="Extract userId from response and store as #TestCase#userId" id="d9d90765-7716-4e2a-95c9-f8b33b40e213"><con:settings/><con:config><script>import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+
+def response = context.expand('${Create-User#Response}');
+
+ObjectMapper mapper = new ObjectMapper()
+JsonNode responseJSON = mapper.readTree(response)
+def userId = responseJSON[0].userId
+
+testRunner.testCase.setPropertyValue("userId", userId.toString().replace("\"",""));
+</script></con:config></con:testStep><con:testStep type="restrequest" name="Get-User" id="f110a0d5-3885-462a-b5c6-155c0c92d3e2"><con:settings/><con:config service="http://localhost:3000" resourcePath="/REST/users/${#TestCase#userID}" methodName="Get User" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get-User" id="49edae29-0ca9-49fe-b4db-05156a28f652" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/REST/users</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="91cdd0d1-6410-49d7-ab6d-dfacd4364557" name="Valid HTTP Status Codes"><con:configuration><codes>200, 204</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="914c46ae-3519-46a1-9804-e0d0d9fce19f" name="Valid GetUser Response Structure" disabled="true"><con:configuration><scriptText>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${GetUser#Response}');
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+JsonNode responseSchemaJSON = mapper.readTree(new File("/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schema/getUserSchema.txt").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+def test_Status=false
+
+ if (responseSchema.validInstance(responseJSON)) {
+
+  log.info("Response Validated!")
+
+  test_Status=true
+} else {
+
+  log.info(responseSchema.validate(responseJSON).toString())
+
+}
+
+assert test_Status==true
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="aa1948a8-8e6c-4af2-b946-afe3a0d29200" name="Valid Content Type"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="userId" value="AVydRe5EDu7jPyDV2v9" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Valid Get-User Response Schema" id="534b968a-f179-4f43-85ee-d3e460d4a552"><con:settings/><con:config><script>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${Get-User#Response}');
+def pathname = testRunner.testCase.getPropertyValue("schemaPath")
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+//JsonNode responseSchemaJSON = mapper.readTree(new File("/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schema/getUserResponseSchema.txt").text);
+JsonNode responseSchemaJSON = mapper.readTree(new File(pathname+"getUserResponseSchema.json").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+def test_Status=false
+
+ if (responseSchema.validInstance(responseJSON)) {
+
+  log.info("Get-User Response Schema Validated!")
+
+  test_Status=true
+} else {
+
+  log.info(responseSchema.validate(responseJSON).toString())
+
+}
+
+assert test_Status==true
+</script></con:config></con:testStep><con:testStep type="groovy" name="Valid GetUser Response" id="8a8c9c9d-0a78-4f67-ae37-e83bec30c531"><con:settings/><con:config><script>import org.skyscreamer.jsonassert.*
+ 
+//def String expected = testRunner.testCase.getPropertyValue("createUserData")
+def String expected = testRunner.testCase.testSteps["Create-User"].getPropertyValue( "Request" )
+//def userId =  testRunner.testCase.getTestStepByName("GetUser").getPropertyValue("userId")
+def String actual = context.expand( '${Get-User#Response}' );
+
+// Test will pass if actual is a superset of expected.Change strict to true if you want to make sure there is an exact match.
+JSONAssert.assertEquals(expected, actual, false)
+assert true
+
+</script></con:config></con:testStep><con:testStep type="restrequest" name="Update-User" id="199e432c-c4ad-48ea-bddc-1e8f947ebdbd"><con:settings/><con:config service="http://localhost:3000" methodName="Update User With Put" resourcePath="/REST/users/${#TestCase#userID}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Update-User" id="77d37d71-d05f-4668-9ff2-f60fb99769ef" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:3000</con:endpoint><con:request>{"firstName":"updatedFirstName","lastName":"updatedLastName","contractIdSet":["AEF123","TOBE425","Newlyupdated"]}
+</con:request><con:originalUri>http://localhost/REST/users/AVyjTCM9EDu7jPyDV2wQ</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="aec812c1-bcb4-4edb-9969-b00b4d5b467e" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="6b9d7a16-0360-4163-bca1-b30a73623da2" name="Valid Content Type"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Valid Update-User Response Schema" id="9f9e1fa5-db68-4bb5-865d-8749196a256f"><con:settings/><con:config><script>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${Update-User#Response}');
+def pathname = testRunner.testCase.getPropertyValue("schemaPath")
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+//JsonNode responseSchemaJSON = mapper.readTree(new File("/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schema/updateUserResponseSchema.txt").text);
+JsonNode responseSchemaJSON = mapper.readTree(new File(pathname+"updateUserResponseSchema.json").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+result = responseSchema.validate(responseJSON)
+
+assert !result.toString().contains("failure") : result
+</script></con:config></con:testStep><con:testStep type="groovy" name="Valid Update-User Response" id="c47ea34a-8b69-4647-a026-c442187450ef"><con:settings/><con:config><script>import org.skyscreamer.jsonassert.*
+ 
+//def String expected = testRunner.testCase.getPropertyValue("updateUserData")
+def String expected = testRunner.testCase.testSteps["Update-User"].getPropertyValue( "Request" )
+//def userId =  testRunner.testCase.getTestStepByName("GetUser").getPropertyValue("userId")
+def String actual = context.expand( '${Update-User#Response}' );
+
+// Test will pass if actual is a superset of expected.Change strict to true if you want to make sure there is an exact match.
+JSONAssert.assertEquals(expected, actual, false)
+assert true
+
+</script></con:config></con:testStep><con:testStep type="restrequest" name="Delete-User" id="edd09a1c-9313-4024-bcf3-c6c46104d324"><con:settings/><con:config service="http://localhost:3000" methodName="Delete User" resourcePath="/REST/users/${#TestCase#userID}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Delete-User" id="a9a8abb6-348d-4801-a07e-a6244b7cb24c" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/REST/users/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="3cdb8338-9aa8-4051-82b6-aced6638993f" name="Valid HTTP Status Codes"><con:configuration><codes>200</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="665e9de2-01ff-4d9e-80ac-a69da3c15124" name="Valid Content Type"><con:configuration/></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Valid Delete-User Response Schema" id="f7cd3cc2-2960-4eb1-8f73-2ce9e9767410"><con:settings/><con:config><script>/*Groovy Script Description:
+
+  - Gets the response using a SoapUI property expansion
+
+  - Load the schema from a file
+
+  - Validate the response against the schema using the library
+
+  - Fail the TestStep if the response doesn’t pass validation.*/
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import com.eviware.soapui.support.XmlHolder
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+
+def response = context.expand('${Delete-User#Response}');
+def pathname = testRunner.testCase.getPropertyValue("schemaPath")
+
+//log.info(response)
+
+ObjectMapper mapper = new ObjectMapper()
+
+JsonNode responseJSON = mapper.readTree(response)
+//JsonNode responseSchemaJSON = mapper.readTree(new File("/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schema/deleteUserResponseSchema.txt").text);
+JsonNode responseSchemaJSON = mapper.readTree(new File(pathname+"deleteUserResponseSchema.json").text);
+JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+JsonSchema responseSchema = factory.getJsonSchema(responseSchemaJSON)
+
+result = responseSchema.validate(responseJSON)
+
+assert !result.toString().contains("failure") : result
+</script></con:config></con:testStep><con:testStep type="groovy" name="Valid Delete-User Response" id="72165337-facb-48e3-8595-bbd0510e0b4e"><con:settings/><con:config><script>import org.skyscreamer.jsonassert.*
+import groovy.json.JsonOutput
+ 
+def expectedObj = [userId:testRunner.testCase.getPropertyValue("userId")];
+def String expected = [JsonOutput.toJson(expectedObj)]
+def String actual = context.expand( '${Delete-User#Response}' );
+
+// Test will pass if actual is a superset of expected.Change strict to true if you want to make sure there is an exact match.
+JSONAssert.assertEquals(expected, actual, true)
+assert true
+
+</script></con:config></con:testStep><con:setupScript>//For each file found in the directory associated with this test case, push file data into the request for the step defined by the filename
+
+pathname = context.expand('${projectDir}') + '/TestData/' + testRunner.testCase.testSuite.name + '/' + testRunner.testCase.name + '/'
+testRunner.testCase.setPropertyValue("schemaPath", context.expand('${projectDir}') + '/Schemas/');
+
+//log.info pathname
+
+new File(pathname).eachFile{file ->
+	if(file.exists()){
+		fullFilename = file.name
+		filename = fullFilename.split("\\.")[0]
+		fileContent = file.text
+		log.info filename
+		testRunner.testCase.testSteps[filename].setPropertyValue( "Request", fileContent )
+	}
+}
+</con:setupScript><con:properties><con:property><con:name>userID</con:name><con:value>AVyrf6CwEDu7jPyDV2wm</con:value></con:property><con:property><con:name>schemaPath</con:name><con:value>/home/osboxes/workspace/express-locallibrary-tutorial/functional_tests/Schemas/</con:value></con:property></con:properties></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

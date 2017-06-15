@@ -1,0 +1,38 @@
+{ 
+"$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "/",
+	"type":"array",
+	"items":{
+		"type":"object",
+		"properties": {
+			"firstName":{"allOf":[
+				{"type":"string"},
+				{"maxLength":100}]
+			},
+			"lastName":{"allOf":[
+				{"type":"string"},
+				{"maxLength":100}]
+			},
+			"contractIdSet":{
+				"type":"array",
+				"items":{
+					"allOf":[
+						{"minLength":1},
+						{"maxLength":100}]
+				}
+			},
+			"email":{"allOf":[
+				{"type":"string"},
+				{"format":"email"},
+				{"minLength":1},
+				{"maxLength":100}]
+			},
+			"userId":{"allOf":[
+				{"minLength":1},
+				{"maxLength":100}]
+			}
+			
+		},
+		"required":["email","userId"]
+	}
+}

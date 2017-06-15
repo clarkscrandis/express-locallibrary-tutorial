@@ -1,0 +1,14 @@
+{ 
+	"type":"array",
+	"items":{
+		"type":"object",
+		"properties": {
+			"userId":{"allOf":[
+				{"minLength":1},
+				{"maxLength":100}]
+			}
+			
+		},
+		"required":["userId"]
+	}
+}
