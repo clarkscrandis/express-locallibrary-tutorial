@@ -93,6 +93,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/UI', uiInterface);
+
+//Set content type GLOBALLY for any restfulInterface response.
+app.use(function (req, res, next) {
+  res.contentType('application/json');
+  next();
+});
+
 app.use('/REST', restfulInterface);
 
 // catch 404 and forward to error handler
