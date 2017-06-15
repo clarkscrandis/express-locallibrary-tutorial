@@ -205,7 +205,7 @@ var callRestUserEndpoint = function (req, callback){
 exports.user_delete_get = function(req, res) {
 	var getUserRequestData = [{userId: req.params.id}];
 	
-	var url = REST_ADDR + '/REST/users' + req.params.id;
+	var url = REST_ADDR + '/REST/users/' + req.params.id;
 		
 	//fire request
 	request({
